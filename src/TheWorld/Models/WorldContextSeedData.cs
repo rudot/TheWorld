@@ -21,9 +21,9 @@ namespace TheWorld.Models
             {
                 var usTrip = new Trip()
                 {
-                    DateCrated = DateTime.UtcNow,
+                    DateCreated = DateTime.UtcNow,
                     Name = "US Trip",
-                    Username = "",
+                    UserName = "",
                     Stops = new List<Stop>()
                     {
                         new Stop() {  Name = "Atlanta, GA", Arrival = new DateTime(2014, 6, 4), Latitude = 33.748995, Longitude = -84.387982, Order = 0 },
@@ -41,9 +41,9 @@ namespace TheWorld.Models
 
                 var worldTrip = new Trip()
                 {
-                    DateCrated = DateTime.UtcNow,
+                    DateCreated = DateTime.UtcNow,
                     Name = "World Trip",
-                    Username = "",
+                    UserName = "",
                     Stops = new List<Stop>()
                     {
                         new Stop() { Order = 0, Latitude =  33.748995, Longitude =  -84.387982, Name = "Atlanta, Georgia", Arrival = DateTime.Parse("Jun 3, 2014") },

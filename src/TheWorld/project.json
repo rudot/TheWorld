@@ -15,7 +15,8 @@
       "version": "1.0.1",
       "type": "platform"
     },
-    "System.Diagnostics.Debug": "4.3.0"
+    "System.Diagnostics.Debug": "4.3.0",
+    "AutoMapper": "4.2.1"
   },
 
   "tools": {
