@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TheWorld.Models;
@@ -12,6 +13,7 @@ using TheWorld.ViewModels;
 
 namespace TheWorld.Controllers.Api
 {
+    [Authorize]
     [Route("/api/trips/{tripName}/stops")]
     public class StopsController:Controller
     {
@@ -32,7 +34,7 @@ namespace TheWorld.Controllers.Api
         {
             try
             {
-                var trip = _repository.GetTripByName(tripName);
+                var trip = _repository.GetTripByName(tripName, User.Identity.Name);
 
                 return Ok(Mapper.Map<IEnumerable<StopViewModel>>(trip.Stops.OrderBy(s=> s.Order).ToList()));
             }
@@ -54,6 +56,7 @@ namespace TheWorld.Controllers.Api
                 if (ModelState.IsValid)
                 {
                     var newStop = Mapper.Map<Stop>(vm);
+
                     //lookup the geocodes
 
                     var result = await _coordsService.GetCoordsAsync(newStop.Name);
@@ -67,7 +70,7 @@ namespace TheWorld.Controllers.Api
                         newStop.Latitude = result.Latitude;
                         newStop.Longitude = result.Longitude;
                         //save to db
-                        _repository.AddStop(tripName, newStop);
+                        _repository.AddStop(tripName, User.Identity.Name, newStop);
 
                         if (await _repository.SaveChangeAsync())
                         {

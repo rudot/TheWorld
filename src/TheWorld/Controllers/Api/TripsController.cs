@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TheWorld.Models;
@@ -11,6 +12,7 @@ using TheWorld.ViewModels;
 
 namespace TheWorld.Controllers.Api
 {
+    [Authorize]
     [RouteAttribute("api/trips")]
     public class TripsController : Controller
     {
@@ -29,7 +31,10 @@ namespace TheWorld.Controllers.Api
         {
             try
             {
-                var results = _repository.GetAllTrips();
+                var trips = _repository.GetUserTripsWithStops(User.Identity.Name);
+                //var trips = _repository.GetAllTripsWithStops();
+                var results = Mapper.Map<IEnumerable<TripViewModel>>(trips);
+
                 return Ok(Mapper.Map<IEnumerable<TripViewModel>>(results));
             }
             catch (Exception ex)
@@ -41,16 +46,19 @@ namespace TheWorld.Controllers.Api
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Post([FromBody]TripViewModel theTrip)
+        public async Task<IActionResult> Post([FromBody]TripViewModel vm)
         {
             if(ModelState.IsValid)
             {
-                var newTrip = Mapper.Map<Trip>(theTrip);
+                var newTrip = Mapper.Map<Trip>(vm);
+                newTrip.UserName = User.Identity.Name;
+
+                _logger.LogInformation("Attempting to save a new trip");
                 _repository.AddTrip(newTrip);
 
                 if (await _repository.SaveChangeAsync())
                 {
-                    return Created($"api/trips/{theTrip.Name}", Mapper.Map<TripViewModel>(newTrip));
+                    return Created($"api/trips/{newTrip.Name}", Mapper.Map<TripViewModel>(newTrip));
                 }
             }
             return BadRequest("Failed to save changes the trip");

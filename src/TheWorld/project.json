@@ -16,7 +16,8 @@
       "type": "platform"
     },
     "System.Diagnostics.Debug": "4.3.0",
-    "AutoMapper": "4.2.1"
+    "AutoMapper": "4.2.1",
+    "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0"
   },
 
   "tools": {

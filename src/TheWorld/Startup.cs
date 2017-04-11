@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -48,17 +51,51 @@ namespace TheWorld
             {
                 
             }
+            services.AddMvc(config =>
+                {
+                    if (_env.IsProduction())
+                    {
+                        config.Filters.Add(new RequireHttpsAttribute());
+                    }
+                })
+                .AddJsonOptions(config =>
+                {
+                    config.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
+
+            services.AddIdentity<WorldUser, IdentityRole>(config =>
+            {
+                config.User.RequireUniqueEmail = true;
+                config.Password.RequiredLength = 8;
+                config.Cookies.ApplicationCookie.LoginPath = "/Auth/Login";
+                config.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents()
+                {
+                    OnRedirectToLogin = async ctx =>
+                    {
+                        if (ctx.Request.Path.StartsWithSegments("/api") &&
+                            ctx.Response.StatusCode == 200 )
+                        {
+                            ctx.Response.StatusCode = 401;
+                        }
+                        else
+                        {
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                            
+                        }
+                        await Task.Yield();
+                    }
+                };
+            })
+            .AddEntityFrameworkStores<WorldContext>();
 
             services.AddDbContext<WorldContext>();
             services.AddScoped<IWorldRepository, WorldRepository>();
             services.AddTransient<GeoCoordsService>();
             services.AddTransient<WorldContextSeedData>();
             services.AddLogging();
-            services.AddMvc()
-                .AddJsonOptions(config =>
-                {
-                    config.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                });
+            
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +105,10 @@ namespace TheWorld
             WorldContextSeedData seeder)
         {
             //loggerFactory.AddConsole();
+
+            app.UseStaticFiles();
+
+            app.UseIdentity();
 
             Mapper.Initialize(config =>
             {
@@ -87,8 +128,7 @@ namespace TheWorld
 
             //app.UseDefaultFiles();
 
-            app.UseStaticFiles();
-
+     
             app.UseMvc(config =>
                 config.MapRoute(
                     name: "Default",
