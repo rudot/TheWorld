@@ -1,8 +1,25 @@
 ﻿<div>
-    <a href="#/" class="btn btn-sm btn-default"><i class="fa fa-angle-left"></i>Back</a>
-    <div class="col-md-6">
-        <h1>The World</h1>
-        <p>This will be a fun website soon!</p>
+    <div>
+        <a href="#!/" class="btn btn-sm btn-default"><i class="fa fa-angle-left"></i>Back</a>
+    </div>
+    
+    <div class="col-md-3">
+        <h1>{{vm.tripName}}</h1>
+
+        <wait-cursor display-when="vm.isBusy"></wait-cursor>
+
+        <div class="alert alert-danger" ng-show="vm.errorMessage">{{vm.errorMessage}}</div>
+
+        <table class="table  table-responsive table-striped">
+            <tr>
+                <th>Location</th>
+                <th>Arrival</th>
+            </tr>
+            <tr ng-repeat="stop in vm.stops">
+                <td>{{stop.name}}</td>
+                <td>{{stop.arrival | date:shortDate}}</td>
+            </tr>
+        </table>
 
         <form>
             <div class="form-group">
@@ -21,7 +38,8 @@
     </div>
 
 
-    <div class="col-md-6">
+    <div class="col-md-9">
         <h2>The Map</h2>
+        <div id="map"></div>
     </div>
 </div>
