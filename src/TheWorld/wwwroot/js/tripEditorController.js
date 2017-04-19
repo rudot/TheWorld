@@ -12,7 +12,9 @@
         vm.errorMessage = "";
         vm.isBusy = true;
 
-        $http.get("/api/trips/" + vm.tripName + "/stops")
+        var url = "/api/trips/" + vm.tripName + "/stops";
+
+        $http.get(url)
             .then(function(response) {
                 angular.copy(response.data, vm.stops);
                 _showMap(vm.stops);
@@ -23,6 +25,25 @@
             .finally(function() {
                 vm.isBusy = false;
             });
+
+                vm.addStop = function() {
+                vm.isBusy = true;
+
+                $http.post(url, vm.newStop)
+                    .then(function (response) {
+                        // success
+                        vm.stops.push(response.data);
+                        _showMap(vm.stops);
+                            vm.newStop = {};
+                        },
+                        function(err) {
+                            //failure
+                            vm.errorMessage = "Failed to add new stop";
+                        })
+                    .finally(function() {
+                        vm.isBusy = false;
+                    });
+            }
         }
 
         function _showMap(stops) {
@@ -41,7 +62,7 @@
                 travelMap.createMap({
                     stops: mapStops,
                     selector: "#map",
-                    currentStop: 1,
+                    currentStop: 5,
                     initialZoom: 3
                 });
             }
