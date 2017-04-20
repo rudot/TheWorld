@@ -43,7 +43,7 @@ namespace TheWorld
         {
             services.AddSingleton(_config);
 
-            if (_env.IsEnvironment("Development") || _env.IsEnvironment("Testing"))
+            if (_env.IsEnvironment("Development") || _env.IsEnvironment("Testing") || _env.IsEnvironment("Production"))
             {
                 services.AddScoped<IMailService, DebugMailService>();
             }
@@ -57,6 +57,7 @@ namespace TheWorld
                     {
                         config.Filters.Add(new RequireHttpsAttribute());
                     }
+                    // config.Filters.Add(new RequireHttpsAttribute());
                 })
                 .AddJsonOptions(config =>
                 {

@@ -1,9 +1,10 @@
 {
 	"version": "1.0.0",
-	"name": "the.world",
+	"name": "the-world",
 	"private": true,
   "devDependencies": {
     "gulp": "~3.9.1",
-    "gulp-uglify": "~1.4.1"
+    "gulp-uglify": "~1.4.1",
+    "gulp-ng-annotate": "2.0.0"
   }
 }

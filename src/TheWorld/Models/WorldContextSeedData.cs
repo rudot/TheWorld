@@ -127,5 +127,10 @@ namespace TheWorld.Models
                 await _context.SaveChangesAsync();
             }
         }
+
+        internal Task EnsureSeedDataAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

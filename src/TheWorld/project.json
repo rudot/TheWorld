@@ -12,8 +12,8 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.NETCore.App": {
-      "version": "1.0.1",
-      "type": "platform"
+      "version": "1.0.1"
+      //"type": "platform"
     },
     "System.Diagnostics.Debug": "4.3.0",
     "AutoMapper": "4.2.1",
@@ -46,10 +46,17 @@
     }
   },
 
+  "runtimes":
+  {
+    "win81-x64": {} 
+  },
+
   "publishOptions": {
     "include": [
       "wwwroot",
-      "web.config"
+      "web.config",
+      "Views",
+      "config.json"
     ]
   },
 
